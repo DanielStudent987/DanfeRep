@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use NFePHP\DA\Legacy\Dom;
 use NFePHP\DA\Legacy\Pdf;
 use NFePHP\DA\Legacy\Common;
+use NFePHP\DA\Nfe\number;
 
 class Danfe extends Common
 {
@@ -57,7 +58,7 @@ class Danfe extends Common
      * Parâmetro para exibir ou ocultar os valores do ICMS Interestadual e Valor Total dos Impostos.
      * @var boolean
      */
-    public $exibirIcmsInterestadual = true;
+    public $exibirIcmsInterestadual = false;
     /**
      * Parâmetro para exibir ou ocultar o texto sobre valor aproximado dos tributos.
      * @var boolean
@@ -343,7 +344,7 @@ class Danfe extends Common
         }
         $this->orientacao   = $sOrientacao;
         $this->papel        = $sPapel;
-        $this->pdf          = new Pdf('P', 'mm', 'A4');
+        $this->pdf          = new Pdf($this->orientacao, 'mm', $this->papel);
         $this->xml          = $docXML;
         $this->logomarca    = $sPathLogo;
         $this->destino      = $sDestino;
@@ -957,7 +958,7 @@ class Danfe extends Common
     
     public function render()
     {
-       
+        
         return $this->pdf->getPdf();
     }
 
@@ -1946,7 +1947,7 @@ class Danfe extends Common
         if (!$this->exibirPIS) {
             $campos_por_linha--;
         }
-        if (!$this->exibirIcmsInterestadual) {
+        if ($this->exibirIcmsInterestadual) {
             $campos_por_linha -= 2;
         }
 

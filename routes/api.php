@@ -22,10 +22,10 @@ use App\Http\Controllers\Api\V1\UserController;
 
 Route::prefix('v1')->group(function () {
     Route::get('/danfes', [DanfeController::class, 'index']);
-    Route::get('/danfes/{chave}', [DanfeController::class, 'show']);
+    //Route::get('/danfes/{chave}', [DanfeController::class, 'show']);
     Route::post('danfes', [DanfeController::class, 'store']);
-    Route::post('/danfes/token', [DanfeController::class, 'getNfe']);
-    Route::post('/danfes/pdf', [DanfeController::class, 'getNfePdf']);
+    Route::post('/danfes/token', [DanfeController::class, 'getNfeXml']);
+    Route::get('/danfes/pdf', [DanfeController::class, 'getNfePdf']);
 
     //USER
     Route::get('users', [UserController::class, 'index']);

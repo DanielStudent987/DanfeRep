@@ -16,6 +16,8 @@ use Dompdf\Options;
 use NFePHP\DA\NFe\Danfe;
 
 
+
+
 class DanfeController extends Controller
 {
     /**
@@ -106,7 +108,7 @@ class DanfeController extends Controller
 
         if ($response->status() == 401) {
             $this->updateAccessToken();
-            return $this->getNfe();
+            return $this->getNfeXml();
         }
         
         //Retorna o xml da nfe
@@ -155,31 +157,53 @@ class DanfeController extends Controller
         return $_SESSION['access_token'];
     }
 
-    //Gerar pdf
+    //Gerar pdf e retorna em json um array com o xml e o pdf
     public function getNfePdf() {
         $xml = $this->getNfeXml();
         $xmlBody = $xml->body();
-
+        
         // Verificar se $xmlBody é uma string
         if (is_string($xmlBody)) {
+            
             try {
 
-                $danfe = new Danfe($xmlBody,
+                $danfe = new Danfe($xmlBody, // XML da NFe
                 'P',             // Orientação da página (P para retrato)
                 'A4',            // Tamanho do papel (A4)
                 '',              // Caminho para o logotipo (opcional)
-                'I',             // Destino do PDF (I para inline)
-                '/public/pdf',              // Diretório para salvar o PDF (se destino for F)
-                '',              // Fonte do DANFE (opcional)
-                1 );
+                'D',             // Destino do PDF (I para inline)
+                '',              // Diretório para salvar o PDF (se destino for F)
+                'Arial',              // Fonte do DANFE (opcional)
+                0 );
+                
+                //Gera um Modelo de DANFE
+                $danfe->montaDANFE(
+                    $orientacao = 'P',
+                    $papel = 'A4',
+                    $logoAlign = 'C',
+                    $situacaoExterna = Danfe::SIT_NONE,
+                    $classPdf = false,
+                    $dpecNumReg = '',
+                    $margSup = 5,
+                    $margEsq = 5,
+                    $margInf = 5);
+                    
+                //Renderiza o PDF
                 $pdf = $danfe->render();
-                //return $pdf;
-               
-         
-                file_put_contents('danfe.pdf', $pdf);
+                //Converte o PDF para base64
+                $pdfBase64 = base64_encode($pdf);
 
+                $response = [
+                    'xml' => $xmlBody,
+                    
+                    'pdf' => $pdfBase64,
+                ];
+
+
+                file_put_contents('JSONXmlPdf.json', json_encode($response));
+                return $response;
             } catch (\Exception $e) {
-                return response()->json(['error' => 'Invalid XML format'], 400);
+                return response()->json(['error' => 'Invalid XML format Here'], 400);
             }
             
         } else {
