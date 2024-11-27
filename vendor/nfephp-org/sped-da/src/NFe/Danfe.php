@@ -344,7 +344,7 @@ class Danfe extends Common
         }
         $this->orientacao   = $sOrientacao;
         $this->papel        = $sPapel;
-        $this->pdf          = new Pdf($this->orientacao, 'mm', $this->papel);
+        $this->pdf          = '';//new Pdf($this->orientacao, 'mm', $this->papel);
         $this->xml          = $docXML;
         $this->logomarca    = $sPathLogo;
         $this->destino      = $sDestino;
@@ -1180,6 +1180,7 @@ class Danfe extends Common
         $chave_acesso = str_replace('NFe', '', $this->infNFe->getAttribute("Id"));
         $bW = 75;
         $bH = 12;
+
         //codigo de barras
         $this->pdf->Code128($x+(($w-$bW)/2), $y+2, $chave_acesso, $bW, $bH);
         //linhas divisorias
@@ -1188,8 +1189,11 @@ class Danfe extends Common
         $aFont = array('font'=>$this->fontePadrao, 'size'=>6, 'style'=>'');
         $y1 = $y+4+$bH;
         $h = 7;
+
+
+        //Gera chave de acesso
         $texto = 'CHAVE DE ACESSO';
-        $this->pTextBox($x, $y1, $w, $h, $texto, $aFont, 'T', 'L', 0, '');
+        $this->pTextBox($x, $y1, $w, $h, $texto, $aFont, 'T', 'L', 0, '', true, 44);
         $aFont = array('font'=>$this->fontePadrao, 'size'=>8, 'style'=>'B');
         $y1 = $y+8+$bH;
         $texto = $this->pFormat($chave_acesso, $this->formatoChave);
@@ -1197,6 +1201,7 @@ class Danfe extends Common
         $y1 = $y+12+$bH;
         $aFont = array('font'=>$this->fontePadrao, 'size'=>8, 'style'=>'');
         $chaveContingencia="";
+
         if ($this->pNotaDPEC()) {
             $cabecalhoProtoAutorizacao = 'NÚMERO DE REGISTRO DPEC';
         } else {

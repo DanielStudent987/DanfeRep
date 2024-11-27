@@ -177,19 +177,23 @@ class DanfeController extends Controller
                 0 );
                 
                 //Gera um Modelo de DANFE
-                $danfe->montaDANFE(
+                $danfe->monta(
                     $orientacao = 'P',
                     $papel = 'A4',
                     $logoAlign = 'C',
-                    $situacaoExterna = Danfe::SIT_NONE,
+                    $situacaoExterna =Danfe::SIT_NONE,
                     $classPdf = false,
                     $dpecNumReg = '',
                     $margSup = 5,
                     $margEsq = 5,
                     $margInf = 5);
+
+            
                     
                 //Renderiza o PDF
                 $pdf = $danfe->render();
+
+                file_put_contents('JSONXmlPdf.pdf', $pdf);
                 //Converte o PDF para base64
                 $pdfBase64 = base64_encode($pdf);
 
