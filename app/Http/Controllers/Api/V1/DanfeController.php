@@ -162,11 +162,26 @@ class DanfeController extends Controller
 
         // Verificar se $xmlBody é uma string
         if (is_string($xmlBody)) {
-            dd($xmlBody);
+            try {
 
-            $danfe = new Danfe($xmlBody);
-            $pdf = $danfe->render();
-            file_put_contents('danfe.pdf', $pdf);
+                $danfe = new Danfe($xmlBody,
+                'P',             // Orientação da página (P para retrato)
+                'A4',            // Tamanho do papel (A4)
+                '',              // Caminho para o logotipo (opcional)
+                'I',             // Destino do PDF (I para inline)
+                '/public/pdf',              // Diretório para salvar o PDF (se destino for F)
+                '',              // Fonte do DANFE (opcional)
+                1 );
+                $pdf = $danfe->render();
+                //return $pdf;
+               
+         
+                file_put_contents('danfe.pdf', $pdf);
+
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Invalid XML format'], 400);
+            }
+            
         } else {
             return response()->json(['error' => 'Invalid XML format'], 400);
         }
